@@ -5,8 +5,8 @@
 
 Summary: high performance web server
 Name: nginx
-Version: 1.2.7
-Release: 2%{?dist}.ngx
+Version: 1.2.8
+Release: 1%{?dist}.ngx
 Vendor: nginx inc.
 URL: http://nginx.org/
 

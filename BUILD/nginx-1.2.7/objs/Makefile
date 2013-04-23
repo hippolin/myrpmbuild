@@ -279,6 +279,7 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/addon/src/ngx_http_set_secure_random.o \
 	objs/addon/src/ngx_http_set_rotate.o \
 	objs/addon/src/ngx_http_set_hmac.o \
+	objs/addon/ngx_http_substitutions_filter_module/ngx_http_subs_filter_module.o \
 	objs/ngx_modules.o
 
 	$(LINK) -o objs/nginx \
@@ -443,6 +444,7 @@ objs/nginx:	objs/src/core/nginx.o \
 	objs/addon/src/ngx_http_set_secure_random.o \
 	objs/addon/src/ngx_http_set_rotate.o \
 	objs/addon/src/ngx_http_set_hmac.o \
+	objs/addon/ngx_http_substitutions_filter_module/ngx_http_subs_filter_module.o \
 	objs/ngx_modules.o \
 	-lpthread -lcrypt -lpcre -lssl -lcrypto -ldl -lz
 	
@@ -1580,6 +1582,13 @@ objs/addon/src/ngx_http_set_hmac.o:	$(ADDON_DEPS) \
 	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
 		-o objs/addon/src/ngx_http_set_hmac.o \
 		../../extra/set-misc-nginx-module/src/ngx_http_set_hmac.c
+
+
+objs/addon/ngx_http_substitutions_filter_module/ngx_http_subs_filter_module.o:	$(ADDON_DEPS) \
+	../../extra/ngx_http_substitutions_filter_module/ngx_http_subs_filter_module.c
+	$(CC) -c $(CFLAGS)  $(ALL_INCS) \
+		-o objs/addon/ngx_http_substitutions_filter_module/ngx_http_subs_filter_module.o \
+		../../extra/ngx_http_substitutions_filter_module/ngx_http_subs_filter_module.c
 
 
 manpage:	objs/nginx.8

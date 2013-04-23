@@ -151,7 +151,7 @@ gcc -O2 -g -D_GNU_SOURCE -D_FILE_OFFSET_BITS=64 -o objs/autotest objs/autotest.c
 ----------------------------------------
 checking for crypt()
 
-/tmp/cckvk4qO.o: In function `main':
+/tmp/cck1J0uw.o: In function `main':
 /root/rpmbuild/BUILD/nginx-1.2.7/objs/autotest.c:7: undefined reference to `crypt'
 collect2: ld returned 1 exit status
 ----------
@@ -256,7 +256,7 @@ checking for statvfs()
 ----------------------------------------
 checking for dlopen()
 
-/tmp/cc1FdJUq.o: In function `main':
+/tmp/ccDXfyA9.o: In function `main':
 /root/rpmbuild/BUILD/nginx-1.2.7/objs/autotest.c:7: undefined reference to `dlopen'
 collect2: ld returned 1 exit status
 ----------
@@ -434,7 +434,7 @@ checking for AF_INET6
 ----------------------------------------
 checking for setproctitle()
 
-/tmp/cc1jAQvZ.o: In function `main':
+/tmp/cc1xiXFC.o: In function `main':
 /root/rpmbuild/BUILD/nginx-1.2.7/objs/autotest.c:7: undefined reference to `setproctitle'
 collect2: ld returned 1 exit status
 ----------
@@ -463,7 +463,7 @@ checking for pwrite()
 ----------------------------------------
 checking for sys_nerr
 
-/tmp/ccqmVvKa.o: In function `main':
+/tmp/ccoV9KBN.o: In function `main':
 /root/rpmbuild/BUILD/nginx-1.2.7/objs/autotest.c:8: warning: `sys_nerr' is deprecated; use `strerror' or `strerror_r' instead
 135
 ----------------------------------------
@@ -493,7 +493,7 @@ checking for System V shared memory
 ----------------------------------------
 checking for POSIX semaphores
 
-/tmp/ccUXUBxY.o: In function `main':
+/tmp/ccuadIdB.o: In function `main':
 /root/rpmbuild/BUILD/nginx-1.2.7/objs/autotest.c:8: undefined reference to `sem_init'
 /root/rpmbuild/BUILD/nginx-1.2.7/objs/autotest.c:9: undefined reference to `sem_destroy'
 collect2: ld returned 1 exit status

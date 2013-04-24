@@ -1,0 +1,15 @@
+[submodule "extra/memc-nginx-module"]
+	path = extra/memc-nginx-module
+	url = git://github.com/agentzh/memc-nginx-module.git
+[submodule "extra/ngx_devel_kit"]
+	path = extra/ngx_devel_kit
+	url = git://github.com/simpl/ngx_devel_kit.git
+[submodule "extra/ngx_http_substitutions_filter_module"]
+	path = extra/ngx_http_substitutions_filter_module
+	url = git://github.com/yaoweibin/ngx_http_substitutions_filter_module.git
+[submodule "extra/set-misc-nginx-module"]
+	path = extra/set-misc-nginx-module
+	url = git://github.com/agentzh/set-misc-nginx-module.git
+[submodule "extra/srcache-nginx-module"]
+	path = extra/srcache-nginx-module
+	url = git://github.com/agentzh/srcache-nginx-module.git

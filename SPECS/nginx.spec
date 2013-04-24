@@ -88,9 +88,9 @@ not stripped version of nginx build with the debugging log support
         --with-ipv6 \
         --with-debug \
         --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
+        --add-module=../../extra/ngx_devel_kit \
         --add-module=../../extra/srcache-nginx-module \
         --add-module=../../extra/memc-nginx-module \
-        --add-module=../../extra/ngx_devel_kit \
         --add-module=../../extra/set-misc-nginx-module \
         --add-module=../../extra/ngx_http_substitutions_filter_module \
         $*

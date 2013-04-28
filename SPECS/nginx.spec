@@ -2,12 +2,12 @@
 %define nginx_home %{_localstatedir}/cache/nginx
 %define nginx_user nginx
 %define nginx_group nginx
-%define _topdir %(echo $HOME)/rpmbuild
+
 
 Summary: high performance web server
 Name: nginx
 Version: 1.2.8
-Release: 1%{?dist}.ngx
+Release: %{buildnumber}%{?dist}.ngx
 Epoch: 2
 Vendor: nginx inc.
 URL: http://nginx.org/

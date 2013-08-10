@@ -95,6 +95,7 @@ not stripped version of nginx build with the debugging log support
         --add-module=../../extra/memc-nginx-module \
         --add-module=../../extra/set-misc-nginx-module \
         --add-module=../../extra/ngx_http_substitutions_filter_module \
+	--add-module=../../extra/nginx-dav-ext-module \
         $*
 make %{?_smp_mflags}
 %{__mv} %{_builddir}/%{name}-%{version}/objs/nginx \
@@ -135,6 +136,7 @@ make %{?_smp_mflags}
         --add-module=../../extra/ngx_devel_kit \
         --add-module=../../extra/set-misc-nginx-module \
         --add-module=../../extra/ngx_http_substitutions_filter_module \
+	--add-module=../../extra/nginx-dav-ext-module \
         $*
 make %{?_smp_mflags}
 

@@ -2,11 +2,11 @@
 %define nginx_home %{_localstatedir}/cache/nginx
 %define nginx_user nginx
 %define nginx_group nginx
-
+%define buildnumber %(date +%Y%m%d%H%M)
 
 Summary: high performance web server
 Name: nginx
-Version: 1.2.9
+Version: 1.4.2
 Release: %{buildnumber}%{?dist}.ngx
 Epoch: 2
 Vendor: nginx inc.
@@ -96,6 +96,7 @@ not stripped version of nginx build with the debugging log support
         --add-module=../../extra/set-misc-nginx-module \
         --add-module=../../extra/ngx_http_substitutions_filter_module \
 	--add-module=../../extra/nginx-dav-ext-module \
+        --with-http_geoip_module \
         $*
 make %{?_smp_mflags}
 %{__mv} %{_builddir}/%{name}-%{version}/objs/nginx \
@@ -137,6 +138,7 @@ make %{?_smp_mflags}
         --add-module=../../extra/set-misc-nginx-module \
         --add-module=../../extra/ngx_http_substitutions_filter_module \
 	--add-module=../../extra/nginx-dav-ext-module \
+        --with-http_geoip_module \
         $*
 make %{?_smp_mflags}
 

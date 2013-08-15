@@ -32,6 +32,8 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: zlib-devel
 BuildRequires: pcre-devel
 BuildRequires: perl
+BuildRequires: GeoIP-devel
+BuildRequires: expat-devel
 %if 0%{?suse_version}
 BuildRequires: libopenssl-devel
 Requires(pre): pwdutils
@@ -41,6 +43,7 @@ Requires: initscripts >= 8.36
 Requires(pre): shadow-utils
 Requires(post): chkconfig
 %endif
+Requires: GeoIP
 Provides: webserver
 
 %description

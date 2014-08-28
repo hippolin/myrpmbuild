@@ -23,7 +23,7 @@ Source7: nginx.suse.init
 Source8: https://github.com/simpl/ngx_devel_kit/archive/v0.2.19.tar.gz
 Source9: https://github.com/openresty/srcache-nginx-module/archive/v0.28.tar.gz
 Source10: https://github.com/openresty/memc-nginx-module/archive/v0.15.tar.gz
-Source11: https://github.com/openresty/set-misc-nginx-module/archive/v0.24.tar.gz
+Source11: https://github.com/openresty/set-misc-nginx-module/archive/v0.25.tar.gz
 Source12: https://github.com/yaoweibin/ngx_http_substitutions_filter_module/archive/v0.6.4.tar.gz
 Source13: https://github.com/arut/nginx-dav-ext-module/archive/v0.0.3.tar.gz
 
@@ -104,7 +104,7 @@ not stripped version of nginx build with the debugging log support
         --add-module=../ngx_devel_kit-0.2.19 \
         --add-module=../srcache-nginx-module-0.28 \
         --add-module=../memc-nginx-module-0.15 \
-        --add-module=../set-misc-nginx-module-0.24 \
+        --add-module=../set-misc-nginx-module-0.25 \
         --add-module=../ngx_http_substitutions_filter_module-0.6.4 \
         --add-module=../nginx-dav-ext-module-0.0.3 \
         $*
@@ -146,7 +146,7 @@ make %{?_smp_mflags}
         --add-module=../ngx_devel_kit-0.2.19 \
         --add-module=../srcache-nginx-module-0.28 \
         --add-module=../memc-nginx-module-0.15 \
-        --add-module=../set-misc-nginx-module-0.24 \
+        --add-module=../set-misc-nginx-module-0.25 \
         --add-module=../ngx_http_substitutions_filter_module-0.6.4 \
         --add-module=../nginx-dav-ext-module-0.0.3 \
         $*

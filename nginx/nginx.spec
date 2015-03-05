@@ -6,7 +6,7 @@
 
 Summary: high performance web server
 Name: nginx
-Version: 1.6.1
+Version: 1.6.2
 Release: %{buildnumber}%{?dist}.ngx
 Epoch: 2
 Vendor: nginx inc.
@@ -21,9 +21,9 @@ Source5: nginx.vh.default.conf
 Source6: nginx.vh.example_ssl.conf
 Source7: nginx.suse.init
 Source8: https://github.com/simpl/ngx_devel_kit/archive/v0.2.19.tar.gz
-Source9: https://github.com/openresty/srcache-nginx-module/archive/v0.28.tar.gz
+Source9: https://github.com/openresty/srcache-nginx-module/archive/v0.29.tar.gz
 Source10: https://github.com/openresty/memc-nginx-module/archive/v0.15.tar.gz
-Source11: https://github.com/openresty/set-misc-nginx-module/archive/v0.25.tar.gz
+Source11: https://github.com/openresty/set-misc-nginx-module/archive/v0.28.tar.gz
 Source12: https://github.com/yaoweibin/ngx_http_substitutions_filter_module/archive/v0.6.4.tar.gz
 Source13: https://github.com/arut/nginx-dav-ext-module/archive/v0.0.3.tar.gz
 
@@ -40,6 +40,7 @@ BuildRequires: pcre-devel
 BuildRequires: perl
 BuildRequires: GeoIP-devel
 BuildRequires: expat-devel
+BuildRequires: gd-last-devel
 %if 0%{?suse_version}
 BuildRequires: libopenssl-devel
 Requires(pre): pwdutils
@@ -50,6 +51,7 @@ Requires(pre): shadow-utils
 Requires(post): chkconfig
 %endif
 Requires: GeoIP
+Requires: gd-last
 Provides: webserver
 
 %description
@@ -101,10 +103,11 @@ not stripped version of nginx build with the debugging log support
         --with-debug \
         --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
         --with-http_geoip_module \
+        --with-http_image_filter_module \
         --add-module=../ngx_devel_kit-0.2.19 \
-        --add-module=../srcache-nginx-module-0.28 \
+        --add-module=../srcache-nginx-module-0.29 \
         --add-module=../memc-nginx-module-0.15 \
-        --add-module=../set-misc-nginx-module-0.25 \
+        --add-module=../set-misc-nginx-module-0.28 \
         --add-module=../ngx_http_substitutions_filter_module-0.6.4 \
         --add-module=../nginx-dav-ext-module-0.0.3 \
         $*
@@ -143,10 +146,11 @@ make %{?_smp_mflags}
         --with-ipv6 \
         --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
         --with-http_geoip_module \
+        --with-http_image_filter_module \
         --add-module=../ngx_devel_kit-0.2.19 \
-        --add-module=../srcache-nginx-module-0.28 \
+        --add-module=../srcache-nginx-module-0.29 \
         --add-module=../memc-nginx-module-0.15 \
-        --add-module=../set-misc-nginx-module-0.25 \
+        --add-module=../set-misc-nginx-module-0.28 \
         --add-module=../ngx_http_substitutions_filter_module-0.6.4 \
         --add-module=../nginx-dav-ext-module-0.0.3 \
         $*

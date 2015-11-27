@@ -1,0 +1,13 @@
+{
+  "name": "rpmbuild",
+  "default_attributes": {
+    "yum": {
+      "remi-php56": {
+        "enable": true,
+        "priority": "5"
+      }
+    }
+  },
+  "chef_type": "environment",
+  "json_class": "Chef::Environment"
+}

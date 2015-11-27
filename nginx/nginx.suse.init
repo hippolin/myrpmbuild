@@ -52,7 +52,7 @@ upgrade() {
     oldbinpidfile=${pidfile}.oldbin
 
     configtest -q || return 6
-    echo -n $"Staring new master: "
+    echo -n $"Starting new master: "
     /sbin/killproc -p ${pidfile} -USR2 $nginx
     /bin/usleep $SLEEPMSEC
     if [ -f ${oldbinpidfile} -a -f ${pidfile} ]; then

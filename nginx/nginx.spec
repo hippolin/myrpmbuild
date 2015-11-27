@@ -2,13 +2,64 @@
 %define nginx_home %{_localstatedir}/cache/nginx
 %define nginx_user nginx
 %define nginx_group nginx
-%define buildnumber %(date +%Y%m%d%H%M)
+%define nginx_loggroup adm
 
-Summary: high performance web server
+# distribution specific definitions
+%define use_systemd (0%{?fedora} && 0%{?fedora} >= 18) || (0%{?rhel} && 0%{?rhel} >= 7) || (0%{?suse_version} == 1315)
+
+%if 0%{?rhel}  == 5
+Group: System Environment/Daemons
+Requires(pre): shadow-utils
+Requires: initscripts >= 8.36
+Requires(post): chkconfig
+Requires: openssl
+BuildRequires: openssl-devel
+%endif
+
+%if 0%{?rhel}  == 6
+Group: System Environment/Daemons
+Requires(pre): shadow-utils
+Requires: initscripts >= 8.36
+Requires(post): chkconfig
+Requires: openssl >= 1.0.1
+BuildRequires: openssl-devel >= 1.0.1
+%define with_spdy 1
+%endif
+
+%if 0%{?rhel}  == 7
+Group: System Environment/Daemons
+Requires(pre): shadow-utils
+Requires: systemd
+Requires: openssl >= 1.0.1
+BuildRequires: systemd
+BuildRequires: openssl-devel >= 1.0.1
+Epoch: 1
+%define with_spdy 1
+%endif
+
+%if 0%{?suse_version} == 1110
+Group: Productivity/Networking/Web/Servers
+BuildRequires: libopenssl-devel
+Requires(pre): pwdutils
+%define nginx_loggroup trusted
+%endif
+
+%if 0%{?suse_version} == 1315
+Group: Productivity/Networking/Web/Servers
+BuildRequires: libopenssl-devel
+BuildRequires: systemd
+Requires(pre): shadow
+Requires: systemd
+%define with_spdy 1
+%define nginx_loggroup trusted
+%endif
+
+# end of distribution specific definitions
+
+Summary: High performance web server
 Name: nginx
-Version: 1.6.2
-Release: %{buildnumber}%{?dist}.ngx
-Epoch: 2
+Version: 1.8.0
+Release: 1%{?dist}.udntv
 Vendor: nginx inc.
 URL: http://nginx.org/
 
@@ -20,54 +71,46 @@ Source4: nginx.conf
 Source5: nginx.vh.default.conf
 Source6: nginx.vh.example_ssl.conf
 Source7: nginx.suse.init
-Source8: https://github.com/simpl/ngx_devel_kit/archive/v0.2.19.tar.gz
-Source9: https://github.com/openresty/srcache-nginx-module/archive/v0.29.tar.gz
-Source10: https://github.com/openresty/memc-nginx-module/archive/v0.15.tar.gz
-Source11: https://github.com/openresty/set-misc-nginx-module/archive/v0.28.tar.gz
-Source12: https://github.com/yaoweibin/ngx_http_substitutions_filter_module/archive/v0.6.4.tar.gz
-Source13: https://github.com/arut/nginx-dav-ext-module/archive/v0.0.3.tar.gz
+Source8: nginx.service
+Source9: nginx.upgrade.sh
+Source10: nginx.suse.logrotate
+Source21: https://github.com/simpl/ngx_devel_kit/archive/v0.2.19.tar.gz
+Source22: https://github.com/openresty/srcache-nginx-module/archive/v0.30.tar.gz
+Source23: https://github.com/openresty/memc-nginx-module/archive/v0.16.tar.gz
+Source24: https://github.com/openresty/set-misc-nginx-module/archive/v0.29.tar.gz
+Source25: https://github.com/yaoweibin/ngx_http_substitutions_filter_module/archive/v0.6.4.tar.gz
+Source26: https://github.com/arut/nginx-dav-ext-module/archive/v0.0.3.tar.gz
 
 License: 2-clause BSD-like license
-%if 0%{?suse_version}
-Group: Productivity/Networking/Web/Servers
-%else
-Group: System Environment/Daemons
-%endif
 
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: zlib-devel
 BuildRequires: pcre-devel
-BuildRequires: perl
 BuildRequires: GeoIP-devel
-BuildRequires: expat-devel
 BuildRequires: gd-last-devel
-%if 0%{?suse_version}
-BuildRequires: libopenssl-devel
-Requires(pre): pwdutils
-%else
-BuildRequires: openssl-devel
-Requires: initscripts >= 8.36
-Requires(pre): shadow-utils
-Requires(post): chkconfig
-%endif
 Requires: GeoIP
 Requires: gd-last
+
 Provides: webserver
 
 %description
-nginx [engine x] is a HTTP and reverse proxy server, as well as
-a mail proxy server
+nginx [engine x] is an HTTP and reverse proxy server, as well as
+a mail proxy server.
 
 %package debug
 Summary: debug version of nginx
 Group: System Environment/Daemons
 Requires: nginx
 %description debug
-not stripped version of nginx build with the debugging log support
+Not stripped version of nginx built with the debugging log support.
+
+%if 0%{?suse_version} == 1315
+%debug_package
+%endif
 
 %prep
 %setup -q
-%setup -b 8 -b 9 -b 10 -b 11 -b 12 -b 13
+%setup -b 21 -b 22 -b 23 -b 24 -b 25 -b 26
 
 %build
 ./configure \
@@ -92,22 +135,25 @@ not stripped version of nginx build with the debugging log support
         --with-http_dav_module \
         --with-http_flv_module \
         --with-http_mp4_module \
+        --with-http_gunzip_module \
         --with-http_gzip_static_module \
         --with-http_random_index_module \
         --with-http_secure_link_module \
         --with-http_stub_status_module \
+        --with-http_auth_request_module \
         --with-mail \
         --with-mail_ssl_module \
         --with-file-aio \
         --with-ipv6 \
         --with-debug \
+        %{?with_spdy:--with-http_spdy_module} \
         --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
         --with-http_geoip_module \
         --with-http_image_filter_module \
         --add-module=../ngx_devel_kit-0.2.19 \
-        --add-module=../srcache-nginx-module-0.29 \
-        --add-module=../memc-nginx-module-0.15 \
-        --add-module=../set-misc-nginx-module-0.28 \
+        --add-module=../srcache-nginx-module-0.30 \
+        --add-module=../memc-nginx-module-0.16 \
+        --add-module=../set-misc-nginx-module-0.29 \
         --add-module=../ngx_http_substitutions_filter_module-0.6.4 \
         --add-module=../nginx-dav-ext-module-0.0.3 \
         $*
@@ -136,21 +182,24 @@ make %{?_smp_mflags}
         --with-http_dav_module \
         --with-http_flv_module \
         --with-http_mp4_module \
+        --with-http_gunzip_module \
         --with-http_gzip_static_module \
         --with-http_random_index_module \
         --with-http_secure_link_module \
         --with-http_stub_status_module \
+        --with-http_auth_request_module \
         --with-mail \
         --with-mail_ssl_module \
         --with-file-aio \
         --with-ipv6 \
+        %{?with_spdy:--with-http_spdy_module} \
         --with-cc-opt="%{optflags} $(pcre-config --cflags)" \
         --with-http_geoip_module \
         --with-http_image_filter_module \
         --add-module=../ngx_devel_kit-0.2.19 \
-        --add-module=../srcache-nginx-module-0.29 \
-        --add-module=../memc-nginx-module-0.15 \
-        --add-module=../set-misc-nginx-module-0.28 \
+        --add-module=../srcache-nginx-module-0.30 \
+        --add-module=../memc-nginx-module-0.16 \
+        --add-module=../set-misc-nginx-module-0.29 \
         --add-module=../ngx_http_substitutions_filter_module-0.6.4 \
         --add-module=../nginx-dav-ext-module-0.0.3 \
         $*
@@ -183,20 +232,36 @@ make %{?_smp_mflags}
 %{__install} -m 644 -p %{SOURCE3} \
    $RPM_BUILD_ROOT%{_sysconfdir}/sysconfig/nginx
 
+%if %{use_systemd}
+# install systemd-specific files
+%{__mkdir} -p $RPM_BUILD_ROOT%{_unitdir}
+%{__install} -m644 %SOURCE8 \
+        $RPM_BUILD_ROOT%{_unitdir}/nginx.service
+%{__mkdir} -p $RPM_BUILD_ROOT%{_libexecdir}/initscripts/legacy-actions/nginx
+%{__install} -m755 %SOURCE9 \
+        $RPM_BUILD_ROOT%{_libexecdir}/initscripts/legacy-actions/nginx/upgrade
+%else
 # install SYSV init stuff
 %{__mkdir} -p $RPM_BUILD_ROOT%{_initrddir}
-%if 0%{?suse_version}
+%if 0%{?suse_version} == 1110
 %{__install} -m755 %{SOURCE7} \
    $RPM_BUILD_ROOT%{_initrddir}/nginx
 %else
 %{__install} -m755 %{SOURCE2} \
    $RPM_BUILD_ROOT%{_initrddir}/nginx
-
 %endif
+%endif
+
 # install log rotation stuff
 %{__mkdir} -p $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d
+%if 0%{?suse_version}
+%{__install} -m 644 -p %{SOURCE10} \
+   $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/nginx
+%else
 %{__install} -m 644 -p %{SOURCE1} \
    $RPM_BUILD_ROOT%{_sysconfdir}/logrotate.d/nginx
+%endif
+
 %{__install} -m644 %{_builddir}/%{name}-%{version}/objs/nginx.debug \
    $RPM_BUILD_ROOT%{_sbindir}/nginx.debug
 
@@ -224,7 +289,13 @@ make %{?_smp_mflags}
 
 %config(noreplace) %{_sysconfdir}/logrotate.d/nginx
 %config(noreplace) %{_sysconfdir}/sysconfig/nginx
+%if %{use_systemd}
+%{_unitdir}/nginx.service
+%dir %{_libexecdir}/initscripts/legacy-actions/nginx
+%{_libexecdir}/initscripts/legacy-actions/nginx/*
+%else
 %{_initrddir}/nginx
+%endif
 
 %dir %{_datadir}/nginx
 %dir %{_datadir}/nginx/html
@@ -247,35 +318,118 @@ exit 0
 %post
 # Register the nginx service
 if [ $1 -eq 1 ]; then
+%if %{use_systemd}
+    /usr/bin/systemctl preset nginx.service >/dev/null 2>&1 ||:
+%else
     /sbin/chkconfig --add nginx
+%endif
     # print site info
     cat <<BANNER
 ----------------------------------------------------------------------
 
-Thanks for using NGINX!
+Thanks for using nginx!
 
-Check out our community web site:
-* http://nginx.org/en/support.html
+Please find the official documentation for nginx here:
+* http://nginx.org/en/docs/
 
-If you have questions about commercial support for NGINX please visit:
-* http://www.nginx.com/support.html
+Commercial subscriptions for nginx are available on:
+* http://nginx.com/products/
 
 ----------------------------------------------------------------------
 BANNER
+
+    # Touch and set permisions on default log files on installation
+
+    if [ -d %{_localstatedir}/log/nginx ]; then
+        if [ ! -e %{_localstatedir}/log/nginx/access.log ]; then
+            touch %{_localstatedir}/log/nginx/access.log
+            %{__chmod} 640 %{_localstatedir}/log/nginx/access.log
+            %{__chown} nginx:%{nginx_loggroup} %{_localstatedir}/log/nginx/access.log
+        fi
+
+        if [ ! -e %{_localstatedir}/log/nginx/error.log ]; then
+            touch %{_localstatedir}/log/nginx/error.log
+            %{__chmod} 640 %{_localstatedir}/log/nginx/error.log
+            %{__chown} nginx:%{nginx_loggroup} %{_localstatedir}/log/nginx/error.log
+        fi
+    fi
 fi
 
 %preun
 if [ $1 -eq 0 ]; then
+%if %use_systemd
+    /usr/bin/systemctl --no-reload disable nginx.service >/dev/null 2>&1 ||:
+    /usr/bin/systemctl stop nginx.service >/dev/null 2>&1 ||:
+%else
     /sbin/service nginx stop > /dev/null 2>&1
     /sbin/chkconfig --del nginx
+%endif
 fi
 
 %postun
+%if %use_systemd
+/usr/bin/systemctl daemon-reload >/dev/null 2>&1 ||:
+%endif
 if [ $1 -ge 1 ]; then
-    /sbin/service nginx upgrade &>/dev/null || :
+    /sbin/service nginx status  >/dev/null 2>&1 || exit 0
+    /sbin/service nginx upgrade >/dev/null 2>&1 || echo \
+        "Binary upgrade failed, please check nginx's error.log"
 fi
 
 %changelog
+* Tue Apr 21 2015 Sergey Budnevitch <sb@nginx.com>
+- 1.8.0
+
+* Tue Apr  7 2015 Sergey Budnevitch <sb@nginx.com>
+- 1.6.3
+
+* Tue Sep 16 2014 Sergey Budnevitch <sb@nginx.com>
+- epoch added to the EPEL7/CentOS7 spec to override EPEL one
+- 1.6.2
+
+* Thu Aug  5 2014 Sergey Budnevitch <sb@nginx.com>
+- 1.6.1
+
+* Thu Jul 12 2014 Sergey Budnevitch <sb@nginx.com>
+- incorrect sysconfig filename finding in the initscript fixed
+
+* Thu Apr 24 2014 Konstantin Pavlov <thresh@nginx.com>
+- 1.6.0
+- http-auth-request module added
+
+* Tue Mar 18 2014 Sergey Budnevitch <sb@nginx.com>
+- 1.4.7
+- spec cleanup
+- openssl version dependence added
+- upgrade() function in the init script improved
+- warning added when binary upgrade returns non-zero exit code
+
+* Tue Mar  4 2014 Sergey Budnevitch <sb@nginx.com>
+- 1.4.6
+
+* Tue Feb 11 2014 Konstantin Pavlov <thresh@nginx.com>
+- 1.4.5
+
+* Tue Nov 19 2013 Sergey Budnevitch <sb@nginx.com>
+- 1.4.4
+
+* Tue Oct  8 2013 Sergey Budnevitch <sb@nginx.com>
+- 1.4.3
+
+* Tue Jul 17 2013 Sergey Budnevitch <sb@nginx.com>
+- 1.4.2
+
+* Tue May  6 2013 Sergey Budnevitch <sb@nginx.com>
+- 1.4.1
+
+* Wed Apr 24 2013 Sergey Budnevitch <sb@nginx.com>
+- gunzip module added
+- 1.4.0
+
+* Tue Apr  2 2013 Sergey Budnevitch <sb@nginx.com>
+- set permissions on default log files at installation
+- 1.2.8
+
 * Tue Feb 12 2013 Sergey Budnevitch <sb@nginx.com>
 - excess slash removed from --prefix
 - 1.2.7
